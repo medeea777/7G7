@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <!-- Questo tag serve per far adattare bene la pagina allo schermo dell'iPhone -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Ore Lavoro</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="icon" href="sette.jpg" />
+
+    
+
+         
+</head>
+<body>
+
+    <h1>⏱️ Registro Lavoro</h1>
+
+    <!-- FASE 1: INSERIMENTO VOCALE / TESTUALE -->
+    <div class="card">
+        <h2>Racconta la giornata</h2>
+        <p style="font-size: 14px; color: #666;">
+            Tocca il riquadro, premi il <b>microfono sulla tastiera</b> e parla.<br>
+            <i>Es: "Oggi iniziato alle 8:00 finito alle 17:30 pausa dalle 12:30 alle 13:30 lavoro fiera"</i>
+        </p>
+        <textarea id="inputVoce" rows="3" placeholder="Premi il microfono e parla..."></textarea>
+        <button class="btn-primary" onclick="analizzaTesto()">Analizza Dati ➔</button>
+    </div>
+
+    <!-- FASE 2: SCHERMATA DI CONTROLLO E MODIFICA (Inizialmente nascosta) -->
+    <div id="boxVerifica" class="card nascosto">
+        <h2>2. Controlla e Conferma</h2>
+        
+        <label>Data:</label>
+        <input type="date" id="modData">
+
+        <label>Tipo di Lavoro:</label>
+        <select id="modLavoro" onchange="ricalcolaAnteprima()">
+            <!-- Le opzioni verranno generate da JavaScript in base alle tariffe -->
+        </select>
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Inizio Lavoro:</label>
+                <input type="time" id="modInizio" onchange="ricalcolaAnteprima()">
+            </div>
+            <div style="flex: 1;">
+                <label>Fine Lavoro:</label>
+                <input type="time" id="modFine" onchange="ricalcolaAnteprima()">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Inizio Pausa:</label>
+                <input type="time" id="modPausaInizio" onchange="ricalcolaAnteprima()">
+            </div>
+            <div style="flex: 1;">
+                <label>Fine Pausa:</label>
+                <input type="time" id="modPausaFine" onchange="ricalcolaAnteprima()">
+            </div>
+        </div>
+
+        <div class="totale-box" id="anteprimaCalcolo">
+            Ore nette: 0h | Guadagno: 0,00 €
+        </div>
+
+        <button class="btn-success" onclick="salvaGiornata()">✔ Conferma e Salva</button>
+    </div>
+
+    <!-- FASE 3: RIEPILOGO MENSILE -->
+    <div class="card">
+        <h2>3. Riepilogo del Mese</h2>
+        <div class="totale-box" id="totaleMensile">
+            Totale Mese: 0,00 € (0 ore)
+        </div>
+        <div id="listaGiornate">
+            <!-- Qui appariranno i giorni salvati -->
+        </div>
+    </div>
+
+    <div class="card">
+<button class="btn-primary" style="background-color: #319795; margin-top: 15px;" onclick="scaricaExcel()">📥 Scarica Archivio in Excel (CSV)</button>
+
+    </div>
+    <!-- FASE 4: AGGIUNGI NUOVO LAVORO -->
+<div class="card">
+    <h2>⚙️ Gestione Tariffe</h2>
+    <p style="font-size: 14px; color: #666;">Aggiungi un nuovo tipo di lavoro con la sua paga oraria:</p>
+    
+    <label>Nome del Lavoro:</label>
+    <input type="text" id="nuovoNomeLavoro" placeholder="Es. Cantiere Nord">
+
+    <label>Paga Oraria (€/h):</label>
+    <input type="number" step="0.5" id="nuovaPagaOraria" placeholder="Es. 25.00">
+
+    <button class="btn-primary" style="background-color: #d69e2e; margin-top: 5px;" onclick="aggiungiNuovoLavoro()">➕ Salva Nuovo Lavoro</button>
+</div>
+
+   <script src="code.js"></script>
+</body>
+</html>

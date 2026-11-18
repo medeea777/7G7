@@ -1,0 +1,57 @@
+body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+        }
+        h1, h2 { text-align: center; color: #1a202c; }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        textarea, input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 16px 0;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 16px; /* Evita lo zoom automatico fastidioso su iPhone */
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .btn-primary { background-color: #2b6cb0; color: white; }
+        .btn-success { background-color: #2f855a; color: white; }
+        .btn-danger { background-color: #e53e3e; color: white; padding: 6px 10px; font-size: 12px; width: auto; }
+        .totale-box {
+            background-color: #ebf8ff;
+            border-left: 5px solid #2b6cb0;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .riga-giorno {
+            border-bottom: 1px solid #edf2f7;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .riga-giorno:last-child { border-bottom: none; }
+        .nascosto { display: none; }
+    
