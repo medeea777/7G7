@@ -58,15 +58,26 @@ function aggiungiNuovoLavoro() {
 // ==========================================
 function analizzaTesto() {
     const testo = document.getElementById("inputVoce").value.toLowerCase();
-    
-    const oggi = new Date().toISOString().split('T')[0];
-    document.getElementById("modData").value = oggi;
+
+    // Se nel testo c'è una data tipo "12/11" o "12/11/2026", la imposta; altrimenti usa oggi
+    const matchData = testo.match(/\b([0-3]?[0-9])[\/\-]([01]?[0-9])(?:[\/\-]([0-9]{4}))?\b/);
+    if (matchData) {
+        let giorno = matchData[1].padStart(2, '0');
+        let mese = matchData[2].padStart(2, '0');
+        let anno = matchData[3] || new Date().getFullYear().toString();
+        document.getElementById("modData").value = `${anno}-${mese}-${giorno}`;
+    } else if (!document.getElementById("modData").value) {
+        const oggi = new Date().toISOString().split('T')[0];
+        document.getElementById("modData").value = oggi;
+    }
 
     const regexOrari = /\b([01]?[0-9]|2[0-3])(?:[:.]([0-5][0-9]))?\b/g;
     let orariTrovati = [];
     let match;
 
     while ((match = regexOrari.exec(testo)) !== null) {
+        // Evita che un numero già usato come giorno/mese/anno della data venga letto come orario
+        if (matchData && match[0] === matchData[0]) continue;
         let ore = match[1].padStart(2, '0');
         let minuti = match[2] ? match[2] : "00";
         orariTrovati.push(`${ore}:${minuti}`);
@@ -79,7 +90,7 @@ function analizzaTesto() {
 
     const TARIFFE = getTariffeSalvate();
     let lavoroRilevato = Object.keys(TARIFFE)[0];
-    
+
     for (let chiave in TARIFFE) {
         if (testo.includes(chiave) || testo.includes(TARIFFE[chiave].nome.toLowerCase())) {
             lavoroRilevato = chiave;
@@ -184,6 +195,12 @@ function eliminaGiornata(idDaEliminare) {
 // ==========================================
 // 5. CALCOLO E VISUALIZZAZIONE MENSILE
 // ==========================================
+function formattaDataIT(dataISO) {
+    if (!dataISO || !dataISO.includes("-")) return dataISO || "";
+    const parti = dataISO.split("-");
+    return `${parti[2]}/${parti[1]}/${parti[0]}`;
+}
+
 function aggiornaRiepilogoMensile() {
     const archivio = JSON.parse(localStorage.getItem("registroLavoro")) || [];
     const meseCorrente = new Date().toISOString().substring(0, 7);
@@ -193,25 +210,28 @@ function aggiornaRiepilogoMensile() {
     const contenitoreLista = document.getElementById("listaGiornate");
     contenitoreLista.innerHTML = "";
 
-    archivio.slice().reverse().forEach(giorno => {
+    // Ordina per data decrescente (dal giorno più recente al più vecchio)
+    const archivioOrdinato = archivio.slice().sort((a, b) => b.data.localeCompare(a.data));
+
+    archivioOrdinato.forEach(giorno => {
         if (giorno.meseAnno === meseCorrente) {
             totaleSoldiMese += giorno.guadagno;
             totaleOreMese += giorno.ore;
-
-            const riga = document.createElement("div");
-            riga.className = "riga-giorno";
-            riga.innerHTML = `
-                <div>
-                    <strong>${giorno.data}</strong> (${giorno.inizio}-${giorno.fine}) - ${giorno.lavoro}<br>
-                    <small>${giorno.ore.toFixed(2)} ore &rarr; <b>${giorno.guadagno.toFixed(2)} €</b></small>
-                </div>
-                <button class="btn-danger" onclick="eliminaGiornata(${giorno.id})">Elimina</button>
-            `;
-            contenitoreLista.appendChild(riga);
         }
+
+        const riga = document.createElement("div");
+        riga.className = "riga-giorno";
+        riga.innerHTML = `
+            <div>
+                <strong>${formattaDataIT(giorno.data)}</strong> (${giorno.inizio}-${giorno.fine}) - ${giorno.lavoro}<br>
+                <small>${giorno.ore.toFixed(2)} ore &rarr; <b>${giorno.guadagno.toFixed(2)} €</b></small>
+            </div>
+            <button class="btn-danger" onclick="eliminaGiornata(${giorno.id})">Elimina</button>
+        `;
+        contenitoreLista.appendChild(riga);
     });
 
-    document.getElementById("totaleMensile").innerText = 
+    document.getElementById("totaleMensile").innerText =
         `Totale Mese (${meseCorrente}): ${totaleSoldiMese.toFixed(2)} € (${totaleOreMese.toFixed(2)} ore)`;
 }
 
